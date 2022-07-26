@@ -1,12 +1,11 @@
 package com.example.apiintegracioneexternas.service;
 
 
-import com.example.apiintegracioneexternas.dto.ResponseDto;
+import com.example.apiintegracioneexternas.utils.constantes.ConstDiccionarioMensaje;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -49,25 +48,19 @@ public class GanaTechService {
             data.put("ci", ci);
             data.put("documentCity", documentCity);
             data.put("birthdate", birthdate);
-
             Map<String, Object> request = new HashMap<>();
-
             request.put("data",data);
-
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer "+token);
             headers.set("x-fapi-financial-id", "63");
-
-
             HttpEntity<Map> body = new HttpEntity<>(request, headers);
-
-
             ResponseEntity<Map>  resultMap = restTemplate.postForEntity(baseUrl+"/openapi-stage/v1/accounts/validations/segip", body, Map.class);
             return resultMap.getBody();
 
         }catch (Exception ex){
-            res.put("statusCode","404");
-            res.put("message",ex.toString());
+
+            res.put("codigoMensaje", ConstDiccionarioMensaje.COD2000);
+            res.put("mensaje", ConstDiccionarioMensaje.COD2000_MENSAJE+" Mensaje Técnico: "+ex);
             return  res;
 
         }

@@ -22,7 +22,8 @@ public class GanaTechController {
 
 
         String token = ganaTechService.obtenerToken();
-        Map<String, Object> res = ganaTechService.ConsultaSegip(token,"9133040","LP","22/06/1988");
+        Map<String, Object> res = ganaTechService.ConsultaSegip(token, objRequest.get("ci").toString(),objRequest.get("documentCity").toString(),objRequest.get("birthdate").toString());
+
 
         return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
     }
