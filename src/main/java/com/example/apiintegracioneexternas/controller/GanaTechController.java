@@ -22,7 +22,11 @@ public class GanaTechController {
 
 
         String token = ganaTechService.obtenerToken();
-        Map<String, Object> res = ganaTechService.ConsultaSegip(token, objRequest.get("ci").toString(),objRequest.get("documentCity").toString(),objRequest.get("birthdate").toString());
+        String ci=objRequest.get("ci")!=null?objRequest.get("ci").toString():"";
+        String documentCity=objRequest.get("documentCity")!=null?objRequest.get("documentCity").toString():"";
+        String birthdate=objRequest.get("birthdate")!=null?objRequest.get("birthdate").toString():"";
+
+        Map<String, Object> res = ganaTechService.ConsultaSegip(token, ci,documentCity,birthdate);
 
 
         return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
