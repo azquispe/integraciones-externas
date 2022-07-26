@@ -56,6 +56,8 @@ public class GanaTechService {
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer "+token);
+            headers.set("x-fapi-financial-id", "63");
+
 
             HttpEntity<Map> body = new HttpEntity<>(request, headers);
 
