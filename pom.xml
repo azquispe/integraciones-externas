@@ -40,6 +40,18 @@
 			<artifactId>lombok</artifactId>
 		</dependency>
 
+		<!--para enviar corero -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

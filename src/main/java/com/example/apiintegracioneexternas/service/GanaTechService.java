@@ -1,6 +1,7 @@
 package com.example.apiintegracioneexternas.service;
 
 
+
 import com.example.apiintegracioneexternas.utils.constantes.ConstDiccionarioMensaje;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +60,7 @@ public class GanaTechService {
 
         }catch (Exception ex){
 
-            res.put("codigoMensaje", ConstDiccionarioMensaje.COD2000);
+            res.put("codigoMensaje",  ConstDiccionarioMensaje.COD2000);
             res.put("mensaje", ConstDiccionarioMensaje.COD2000_MENSAJE+" Mensaje Técnico: "+ex);
             return  res;
 
