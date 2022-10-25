@@ -13,9 +13,12 @@ public class VerificarApisBancoGanaderoCron {
 
     @Scheduled(cron = "*/10 * * * * *" )
     public void schedulerTaskVerificaApisBancoGanadero(){
-        long now = System.currentTimeMillis()/1000;
-        System.out.println("Schedule task using cron jobs = "+now);
 
-        emailService.sendEmail("alvaro20092004@hotmail.com");
+        // AUN NO FUNCIONA EL CRON
+
+        /*long now = System.currentTimeMillis()/1000;
+        System.out.println("Schedule task using cron jobs = "+now);
+        emailService.sendEmail("alvaro20092004@hotmail.com");*/
+
     }
 }

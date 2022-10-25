@@ -28,7 +28,6 @@ public class GanaTechController {
 
         Map<String, Object> res = ganaTechService.ConsultaSegip(token, ci,documentCity,birthdate);
 
-
         return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
     }
 
