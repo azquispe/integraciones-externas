@@ -109,8 +109,9 @@ public class AppMovilService {
                                         objPoliza.setPolizaId(objMapPoliza.get("PolicyId") != null ? objMapPoliza.get("PolicyId").toString() : "-");
                                         objPoliza.setNombreProducto(objMapPoliza.get("productName") != null ? objMapPoliza.get("productName").toString() : " - ");
                                         objPoliza.setNumeroProducto("no-identificado");
+                                        objPoliza.setTipoProducto("no-identificado");
 
-                                        objPoliza.setNombreAsegurado(objMapPoliza.get("NameInsured") != null ? objMapPoliza.get("NameInsured").toString() : " - ");
+                                        //objPoliza.setNombreAsegurado(objMapPoliza.get("NameInsured") != null ? objMapPoliza.get("NameInsured").toString() : " - ");
 
                                         objPoliza.setNombrePoliza(objMapPoliza.get("PolicyName") != null ? objMapPoliza.get("PolicyName").toString() : " - ");
                                         objPoliza.setFechaInicio(objMapPoliza.get("EffectiveDate") != null ? objMapPoliza.get("EffectiveDate").toString() : " - ");
@@ -140,6 +141,7 @@ public class AppMovilService {
                                                 Map<String, Object> objMapPolizaDetalle = oMapper.convertValue(lstMapPolizaDetalle.get(0), Map.class);
 
                                                 objPoliza.setNombreTomador(objMapPolizaDetalle.get("NombreTomador") != null ? objMapPolizaDetalle.get("NombreTomador").toString() : "-");
+                                                objPoliza.setNombreAsegurado(objMapPolizaDetalle.get("NombreAsegurado") != null ? objMapPolizaDetalle.get("NombreAsegurado").toString() : "-"  );
                                                 List<String> lstBeneficiarios = new ArrayList();
                                                 if (objMapPolizaDetalle.get("Beneficiarios") != null) {
                                                     List<Map<String, Object>> lstMapBeneficiarios = oMapper.convertValue(objMapPolizaDetalle.get("Beneficiarios"), ArrayList.class);
