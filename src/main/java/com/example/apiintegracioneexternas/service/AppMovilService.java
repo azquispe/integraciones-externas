@@ -52,7 +52,7 @@ public class AppMovilService {
 
     }
 
-    public List<PolizasDto> consultaPoliza(String pCi, String pExtension, String pFechaNac, String pComplemento) {
+    public List<PolizasDto> consultaPoliza(String pNroDocumento, String pExtension, String pFechaNac, String pComplemento) {
 
         Map<String, Object> mapDatosPersona = null;
         Map<String, Object> mapDatosPoliza = null;
@@ -70,7 +70,7 @@ public class AppMovilService {
             // https://ap1.salesforce.com/services/apexrest/vlocity_ins/v1/integrationprocedure/bg_ti_g_getPersonInformation
 
             try {
-                String urlDatosPersona = baseUrl + "/services/apexrest/vlocity_ins/v1/integrationprocedure/" + "bg_ti_g_getPersonInformation?searchCriteria=1&identificationType=CI&identificationNumber=" + pCi + "&identificationPlugin=" + pComplemento;
+                String urlDatosPersona = baseUrl + "/services/apexrest/vlocity_ins/v1/integrationprocedure/" + "bg_ti_g_getPersonInformation?searchCriteria=1&identificationType=CI&identificationNumber=" + pNroDocumento + "&identificationPlugin=" + pComplemento;
                 HttpEntity request = new HttpEntity(headers);
                 ResponseEntity<String> resultMapDatosPersona = restTemplate.exchange(
                         urlDatosPersona,

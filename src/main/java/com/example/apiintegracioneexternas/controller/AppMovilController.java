@@ -24,13 +24,13 @@ public class AppMovilController {
     @PostMapping("/v1/consulta-poliza")
     public ResponseEntity<?> consultaSegip(@RequestBody Map objRequest) {
 
-        String vCi=objRequest.get("ci")!=null?objRequest.get("ci").toString():"";
+        String vNroDocumento=objRequest.get("nroDocumento")!=null?objRequest.get("nroDocumento").toString():"";
         String vExtension=objRequest.get("extension")!=null?objRequest.get("extension").toString():"";
         String vFechaNac=objRequest.get("fechaNacimiento")!=null?objRequest.get("fechaNacimiento").toString():"";
         String vComplemento=objRequest.get("complemento")!=null?objRequest.get("complemento").toString():"";
 
         //List<Map<String, Object>> lstPolizas = appMovilService.consultaPoliza(vCi, vExtension,vFechaNac,vComplemento);
-        List<PolizasDto> lstPolizas = appMovilService.consultaPoliza(vCi, vExtension,vFechaNac,vComplemento);
+        List<PolizasDto> lstPolizas = appMovilService.consultaPoliza(vNroDocumento, vExtension,vFechaNac,vComplemento);
 
         ///return new ResponseEntity<List<Map<String, Object>>>(lstPolizas, HttpStatus.OK);
         return new ResponseEntity<List<PolizasDto>>(lstPolizas, HttpStatus.OK);
