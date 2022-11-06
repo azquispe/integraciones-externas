@@ -1,15 +1,19 @@
 package com.example.apiintegracioneexternas.service;
 
+import com.example.apiintegracioneexternas.dto.PolizasDto;
 import com.example.apiintegracioneexternas.dto.ResponseDto;
 import com.example.apiintegracioneexternas.utils.constantes.ConstDiccionarioMensaje;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,36 +23,155 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AppMovilService {
     private final RestTemplate restTemplate;
-    final String baseUrl = "https://api.bg.com.bo";
+    final String baseUrl = "https://sociedadganadero--devtemp8.sandbox.my.salesforce.com";
     ObjectMapper oMapper = new ObjectMapper();
-    public String obtenerToken (){
 
-        Map<String, Object> data = new HashMap<>();
+    public String obtenerToken() throws URISyntaxException {
+
+        /*Map<String, Object> data = new HashMap<>();
         data.put("client_key", "$2a$10$Ft6UCTo6ovMcGD/d5uJF.eq3uTqeiU0V.VRtHpWRjceNKHw9o01CO");
         data.put("access_code", "Ganaseguros");
         Map<String, Object> risk = new HashMap<>();
         Map<String, Object> request = new HashMap<>();
 
         request.put("data",data);
-        request.put("risk",risk);
+        request.put("risk",risk);*/
 
-        ResponseEntity<Map> resultMap = restTemplate.postForEntity(baseUrl+"/openapi-stage/v1/auth", request, Map.class);
+        ResponseEntity<Map> resultMap = restTemplate.postForEntity(new URI(baseUrl + "/services/oauth2/token?grant_type=password&" +
+                "client_id=3MVG99VEEJ_Bj3.7I7xGG.Bq_J8F3a4MeRx2mQ_YyzMsOkrBBLD_brf0BO42IQUn2rtDSdv5ryAoCQLuDZcwP&" +
+                "client_secret=77ADEFF8025EEBE56BC9DBA7AC5A45685293C40B2A553F1A4B35DCC0CE454E68" +
+                "&username=ararancibia@bg.com.bo.devtemp8&password=fa3BO2aa77cPSdT836OF12yYKHE2fj7Y"), new HashMap<>(), Map.class);
         if (resultMap != null && resultMap.getStatusCode().value() == 200) {
 
-            Map<String, Object> dataToken = oMapper.convertValue(resultMap.getBody().get("data"), Map.class);
-            return dataToken.get("access_token").toString();
+            //Map<String, Object> dataToken = oMapper.convertValue(resultMap.getBody().get("access_token"), Map.class);
+            return resultMap.getBody().get("access_token").toString();
 
-        }else{
+        } else {
             return null;
         }
 
     }
-    public List<Map<String, Object>> consultaPoliza (String pCi, String pExtension,String pFechaNac,String pComplemento){
-        ResponseDto res = new ResponseDto();
-        try{
 
-            String beneficiario1= "Alicia Arancibia";
-            String beneficiario2= "Antonio Arancibia";
+    public List<PolizasDto> consultaPoliza(String pCi, String pExtension, String pFechaNac, String pComplemento) {
+
+        Map<String, Object> mapDatosPersona = null;
+        Map<String, Object> mapDatosPoliza = null;
+        Map<String, Object> mapDatosPolizaDetalle = null;
+
+        List<PolizasDto> lstPolizas = new ArrayList<>();
+
+        try {
+            String token = this.obtenerToken();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + token);
+
+            // BUSCA DATOS PERSONA
+            //  Consulta Datos Persona por Documento de Identidad
+            // https://ap1.salesforce.com/services/apexrest/vlocity_ins/v1/integrationprocedure/bg_ti_g_getPersonInformation
+
+            try {
+                String urlDatosPersona = baseUrl + "/services/apexrest/vlocity_ins/v1/integrationprocedure/" + "bg_ti_g_getPersonInformation?searchCriteria=1&identificationType=CI&identificationNumber=" + pCi + "&identificationPlugin=" + pComplemento;
+                HttpEntity request = new HttpEntity(headers);
+                ResponseEntity<String> resultMapDatosPersona = restTemplate.exchange(
+                        urlDatosPersona,
+                        HttpMethod.GET,
+                        request,
+                        String.class,
+                        1
+                );
+                if (resultMapDatosPersona != null && resultMapDatosPersona.getStatusCode().value() == 200) {
+                    mapDatosPersona = new ObjectMapper().readValue(resultMapDatosPersona.getBody(), Map.class);
+                    if (mapDatosPersona.get("codigoMensaje").equals("CODSF1000")) {
+
+                        Map<String, Object> objCustomer = oMapper.convertValue(mapDatosPersona.get("Customers"), Map.class);
+                        List<Map<String, Object>> lstPersonas = oMapper.convertValue(objCustomer.get("objetos"), ArrayList.class);
+
+                        //BUSCA PÓLIZAS
+                        //  Consulta Póliza(s) de una Persona por “AccountId”
+                        //  https://ap1.salesforce.com/services/apexrest/vlocity_ins/v1/integrationprocedure/bg_ti_g_getProductInformation
+                        for (Map<String, Object> vAccountIdMap : lstPersonas) {
+
+                            String urlPolizas = baseUrl + "/services/apexrest/vlocity_ins/v1/integrationprocedure/bg_ti_g_getProductInformation";
+                            Map<String, Object> requestGetPoliza = new HashMap<>();
+                            requestGetPoliza.put("AccountId",vAccountIdMap.get("AccountId").toString());
+                            HttpEntity<Map> bodyGetPoliza = new HttpEntity<>(requestGetPoliza, headers);
+                            ResponseEntity<String> resultMapDatosPoliza = restTemplate.postForEntity(urlPolizas, bodyGetPoliza, String.class);
+                            if (resultMapDatosPoliza != null && resultMapDatosPoliza.getStatusCode().value() == 200) {
+                                mapDatosPoliza = new ObjectMapper().readValue(resultMapDatosPoliza.getBody(), Map.class);
+                                if (mapDatosPoliza.get("codigoMensaje").equals("CODSF1002")) {
+
+
+                                    PolizasDto objPoliza = null;
+                                    Map<String, Object> objMapProductos = oMapper.convertValue(mapDatosPoliza.get("Products"), Map.class);
+                                    List<Map<String, Object>> lstMapPolizas = oMapper.convertValue(objMapProductos.get("objetos"), ArrayList.class);
+                                    for (Map<String, Object> objMapPoliza : lstMapPolizas) {
+                                        objPoliza = new PolizasDto();
+                                        objPoliza.setPolizaId(objMapPoliza.get("PolicyId") != null ? objMapPoliza.get("PolicyId").toString() : "-");
+                                        objPoliza.setNombreProducto(objMapPoliza.get("productName") != null ? objMapPoliza.get("productName").toString() : " - ");
+                                        objPoliza.setNumeroProducto("no-identificado");
+
+                                        objPoliza.setNombreAsegurado(objMapPoliza.get("NameInsured") != null ? objMapPoliza.get("NameInsured").toString() : " - ");
+
+                                        objPoliza.setNombrePoliza(objMapPoliza.get("PolicyName") != null ? objMapPoliza.get("PolicyName").toString() : " - ");
+                                        objPoliza.setFechaInicio(objMapPoliza.get("EffectiveDate") != null ? objMapPoliza.get("EffectiveDate").toString() : " - ");
+                                        objPoliza.setFechaFin(objMapPoliza.get("ExpirationDate") != null ? objMapPoliza.get("ExpirationDate").toString() : " - ");
+
+
+                                        objPoliza.setFrecuencia(objMapPoliza.get("PremiumFrecuency") != null ? objMapPoliza.get("PremiumFrecuency").toString() : " - ");
+                                        objPoliza.setPrecio(objMapPoliza.get("Price") != null ? objMapPoliza.get("Price").toString() : " - ");
+
+
+                                        // Consulta Detalle de Póliza y Pagos Pendientes por "PolicyId"
+                                        // https://ap1.salesforce.com/services/apexrest/vlocity_ins/v1/integrationprocedure/bg_ti_g_getPolicyInformation
+                                        String urlDetallePolizas = baseUrl + "/services/apexrest/vlocity_ins/v1/integrationprocedure/bg_ti_g_getPolicyInformation?PolicyId=" + objPoliza.getPolizaId() + "&Status=Pending";
+                                        HttpEntity requestDetPoliza = new HttpEntity(headers);
+                                        ResponseEntity<String> resultMapDatosPolizaDetalle = restTemplate.exchange(
+                                                urlDetallePolizas,
+                                                HttpMethod.GET,
+                                                requestDetPoliza,
+                                                String.class,
+                                                1
+                                        );
+                                        if (resultMapDatosPolizaDetalle != null && resultMapDatosPolizaDetalle.getStatusCode().value() == 200) {
+                                            mapDatosPolizaDetalle = new ObjectMapper().readValue(resultMapDatosPolizaDetalle.getBody(), Map.class);
+                                            if (mapDatosPolizaDetalle.get("codigoMensaje").equals("CODSF1002")) {
+
+                                                List<Map<String, Object>> lstMapPolizaDetalle = oMapper.convertValue(mapDatosPolizaDetalle.get("Poliza"), ArrayList.class);
+                                                Map<String, Object> objMapPolizaDetalle = oMapper.convertValue(lstMapPolizaDetalle.get(0), Map.class);
+
+                                                objPoliza.setNombreTomador(objMapPolizaDetalle.get("NombreTomador") != null ? objMapPolizaDetalle.get("NombreTomador").toString() : "-");
+                                                List<String> lstBeneficiarios = new ArrayList();
+                                                if (objMapPolizaDetalle.get("Beneficiarios") != null) {
+                                                    List<Map<String, Object>> lstMapBeneficiarios = oMapper.convertValue(objMapPolizaDetalle.get("Beneficiarios"), ArrayList.class);
+                                                    for (Map<String, Object> objMapBeneficiarios : lstMapBeneficiarios) {
+                                                        lstBeneficiarios.add(
+                                                                (objMapBeneficiarios.get("Nombre") != null ? objMapBeneficiarios.get("Nombre").toString() : " - ") +
+                                                                        (objMapBeneficiarios.get("Porcentaje") != null ? "(" + objMapBeneficiarios.get("Porcentaje").toString() + "%)" : " - ")
+                                                        );
+                                                    }
+                                                }
+                                                objPoliza.setLstBeneficiarios(lstBeneficiarios);
+                                                objPoliza.setNumeroOperacion(objMapPolizaDetalle.get("NroOperacion") != null ? objMapPolizaDetalle.get("NroOperacion").toString() : "-");
+                                                objPoliza.setEstado(objMapPolizaDetalle.get("Status") != null ? objMapPolizaDetalle.get("Status").toString() : "-");
+                                                objPoliza.setMontoPrima(objMapPolizaDetalle.get("PremiumAmount") != null ? objMapPolizaDetalle.get("PremiumAmount").toString() : "-");
+
+                                            }
+                                        }
+                                        lstPolizas.add(objPoliza);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            } catch (Exception ex) {
+                System.out.println("error: " + ex.toString());
+            }
+
+
+            /*String beneficiario1 = "Alicia Arancibia";
+            String beneficiario2 = "Antonio Arancibia";
             List<String> lstBeneficiarios = new ArrayList<>();
             lstBeneficiarios.add(beneficiario1);
             lstBeneficiarios.add(beneficiario2);
@@ -102,13 +225,13 @@ public class AppMovilService {
             List<Map<String, Object>> lstPolizas = new ArrayList<>();
             lstPolizas.add(data1);
             lstPolizas.add(data2);
-            lstPolizas.add(data3);
+            lstPolizas.add(data3);*/
 
             return lstPolizas;
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
-            return  new ArrayList<>();
+            return new ArrayList<>();
 
         }
     }

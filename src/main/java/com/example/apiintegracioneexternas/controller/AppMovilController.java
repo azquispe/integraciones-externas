@@ -1,6 +1,7 @@
 package com.example.apiintegracioneexternas.controller;
 
 
+import com.example.apiintegracioneexternas.dto.PolizasDto;
 import com.example.apiintegracioneexternas.service.AppMovilService;
 import com.example.apiintegracioneexternas.service.GanaTechService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +24,16 @@ public class AppMovilController {
     @PostMapping("/v1/consulta-poliza")
     public ResponseEntity<?> consultaSegip(@RequestBody Map objRequest) {
 
-
         String vCi=objRequest.get("ci")!=null?objRequest.get("ci").toString():"";
         String vExtension=objRequest.get("extension")!=null?objRequest.get("extension").toString():"";
-        String vFechaNac=objRequest.get("fecha_nac")!=null?objRequest.get("fecha_nac").toString():"";
+        String vFechaNac=objRequest.get("fechaNacimiento")!=null?objRequest.get("fechaNacimiento").toString():"";
         String vComplemento=objRequest.get("complemento")!=null?objRequest.get("complemento").toString():"";
 
-        List<Map<String, Object>> lstPolizas = appMovilService.consultaPoliza(vCi, vExtension,vFechaNac,vComplemento);
+        //List<Map<String, Object>> lstPolizas = appMovilService.consultaPoliza(vCi, vExtension,vFechaNac,vComplemento);
+        List<PolizasDto> lstPolizas = appMovilService.consultaPoliza(vCi, vExtension,vFechaNac,vComplemento);
 
-        return new ResponseEntity<List<Map<String, Object>>>(lstPolizas, HttpStatus.OK);
+        ///return new ResponseEntity<List<Map<String, Object>>>(lstPolizas, HttpStatus.OK);
+        return new ResponseEntity<List<PolizasDto>>(lstPolizas, HttpStatus.OK);
     }
 
 
