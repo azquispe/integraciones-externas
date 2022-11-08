@@ -5,6 +5,7 @@ import com.example.apiintegracioneexternas.dto.ResponseDto;
 import com.example.apiintegracioneexternas.utils.constantes.ConstDiccionarioMensaje;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,10 @@ public class AppMovilService {
     private final RestTemplate restTemplate;
     final String baseUrl = "https://sociedadganadero--devtemp8.sandbox.my.salesforce.com";
     ObjectMapper oMapper = new ObjectMapper();
+
+    @Autowired
+    private EmailService emailService;
+
 
     public String obtenerToken() throws URISyntaxException {
 
@@ -235,6 +240,47 @@ public class AppMovilService {
 
             return new ArrayList<>();
 
+        }
+    }
+    public ResponseDto enviarSolicitudSeguro(Map objRequest){
+        ResponseDto res = new ResponseDto();
+        try{
+            // Crear el asunto
+            String vAsunto = "SOLICITUD DE SEGURO";
+
+            // Crear el cuerpo del correo
+            StringBuilder vBody = new StringBuilder();
+
+            vBody.append("Mediante la Presente se informa de una solicitud de seguro <br>");
+            vBody.append("con el siguiente detalle: <br><br>");
+            vBody.append("Nombre : "+objRequest.get("nombreCompleto").toString()+" <br>");
+            vBody.append("Correo :"+objRequest.get("correoElectronico").toString()+" <br />");
+            vBody.append("Ciudad: "+ objRequest.get("ciudad").toString()+" <br />");
+            vBody.append("CI: "+objRequest.get("ci").toString()+" <br />" );
+            vBody.append("Celular: "+objRequest.get("celular").toString()+" <br />");
+            vBody.append("Tipo de seguro: "+objRequest.get("tipoSeguro").toString()+" <br />");
+            vBody.append("Mensaje: "+objRequest.get("mensaje").toString()+" <br />");
+
+            vBody.append("<br />");
+            vBody.append("GANASEGUROS <br>");
+            vBody.append("Correo generado desde la Aplicación Móvil. <br>");
+
+            // Determinar el destinatario copia
+            String vDestino = "azquispe@bg.com.bo";
+            //String vDestino = "alvaro20092004@hotmail.com";
+
+
+            emailService.enviarCorreoHtml(vDestino,vAsunto,vBody.toString());
+
+            res.setCodigo("1000");
+            res.setMensaje("Envio de correo exitoso");
+            return res;
+
+
+        }catch (Exception ex){
+            res.setCodigo("1001");
+            res.setMensaje("Error al enviar correo");
+            return res;
         }
     }
 }

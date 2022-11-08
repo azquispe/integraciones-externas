@@ -2,6 +2,7 @@ package com.example.apiintegracioneexternas.controller;
 
 
 import com.example.apiintegracioneexternas.dto.PolizasDto;
+import com.example.apiintegracioneexternas.dto.ResponseDto;
 import com.example.apiintegracioneexternas.service.AppMovilService;
 import com.example.apiintegracioneexternas.service.GanaTechService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +37,23 @@ public class AppMovilController {
         ///return new ResponseEntity<List<Map<String, Object>>>(lstPolizas, HttpStatus.OK);
         return new ResponseEntity<List<PolizasDto>>(lstPolizas, HttpStatus.OK);
     }
+
+    @PostMapping("/v1/solicitud-seguro")
+    public ResponseEntity<?> solicitudSeguro(@RequestBody Map objRequest) {
+
+        Map<String, Object> response = new HashMap<>();
+        ResponseDto result = appMovilService.enviarSolicitudSeguro(objRequest);
+        response.put("result", result.getElementoGenerico());
+        response.put("message",result.getMensaje());
+        if(result.getCodigo().equals("1000")){
+            response.put("status", 200);
+        }else{
+            response.put("status", 404);
+        }
+
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+    }
+
 
 
 }
