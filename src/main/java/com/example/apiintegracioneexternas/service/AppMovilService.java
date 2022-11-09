@@ -283,4 +283,42 @@ public class AppMovilService {
             return res;
         }
     }
+    public ResponseDto descargarPoliza(String pPolicyId){
+        ResponseDto res = new ResponseDto();
+        Map<String, Object> mapDatosPolizaDetalle = null;
+
+        try{
+            String token = this.obtenerToken();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + token);
+
+            // Consulta Detalle de Póliza y Pagos Pendientes por "PolicyId"
+            // https://ap1.salesforce.com/services/apexrest/vlocity_ins/v1/integrationprocedure/bg_ti_g_getPolicyInformation
+            String urlDetallePolizas = baseUrl + "/services/apexrest/vlocity_ins/v1/integrationprocedure/bg_ti_g_getPolicyInformation?PolicyId=" + pPolicyId + "&Status=Pending";
+            HttpEntity requestDetPoliza = new HttpEntity(headers);
+            ResponseEntity<String> resultMapDatosPolizaDetalle = restTemplate.exchange(
+                    urlDetallePolizas,
+                    HttpMethod.GET,
+                    requestDetPoliza,
+                    String.class,
+                    1
+            );
+            if (resultMapDatosPolizaDetalle != null && resultMapDatosPolizaDetalle.getStatusCode().value() == 200) {
+                mapDatosPolizaDetalle = new ObjectMapper().readValue(resultMapDatosPolizaDetalle.getBody(), Map.class);
+                if (mapDatosPolizaDetalle.get("codigoMensaje").equals("CODSF1002")) {
+                    List<Map<String, Object>> lstMapPolizaDetalle = oMapper.convertValue(mapDatosPolizaDetalle.get("Poliza"), ArrayList.class);
+                    Map<String, Object> objMapPolizaDetalle = oMapper.convertValue(lstMapPolizaDetalle.get(0), Map.class);
+
+                    res.setCodigo("COD-SAT-1000");
+                    res.setMensaje("Poliza Obtenida Exitosamente");
+                    res.setElementoGenerico(objMapPolizaDetalle.get("ArchivoBase64"));
+
+
+                }}
+        }catch (Exception ex){
+            res.setCodigo("COD-SAT-1001");
+            res.setMensaje("Error :"+ex.toString());
+        }
+        return res;
+    }
 }

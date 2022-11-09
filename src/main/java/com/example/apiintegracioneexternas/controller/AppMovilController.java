@@ -5,11 +5,14 @@ import com.example.apiintegracioneexternas.dto.PolizasDto;
 import com.example.apiintegracioneexternas.dto.ResponseDto;
 import com.example.apiintegracioneexternas.service.AppMovilService;
 import com.example.apiintegracioneexternas.service.GanaTechService;
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +57,20 @@ public class AppMovilController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/v1/descargar-poliza/{pPolicyId}")
+    public ResponseEntity<?> descargarPoliza(@PathVariable String pPolicyId) {
 
+        Map<String, Object> response = new HashMap<>();
+        ResponseDto result = appMovilService.descargarPoliza(pPolicyId);
+        response.put("result", result.getElementoGenerico());
+        response.put("message",result.getMensaje());
+        if(result.getCodigo().equals("1000")){
+            response.put("status", 200);
+        }else{
+            response.put("status", 404);
+        }
 
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+
+    }
 }
