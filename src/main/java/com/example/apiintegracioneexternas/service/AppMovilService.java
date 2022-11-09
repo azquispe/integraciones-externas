@@ -2,6 +2,7 @@ package com.example.apiintegracioneexternas.service;
 
 import com.example.apiintegracioneexternas.dto.PolizasDto;
 import com.example.apiintegracioneexternas.dto.ResponseDto;
+import com.example.apiintegracioneexternas.dto.SolicitudPolizaDto;
 import com.example.apiintegracioneexternas.utils.constantes.ConstDiccionarioMensaje;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -283,6 +284,106 @@ public class AppMovilService {
             return res;
         }
     }
+
+    public ResponseDto enviarSolicitudSeguroV2(SolicitudPolizaDto pSolicitudPolizaDto){
+        ResponseDto res = new ResponseDto();
+        try{
+            // Crear el asunto
+            String vAsunto = "SOLICITUD DE SEGURO";
+
+            // Crear el cuerpo del correo
+            StringBuilder vBody = new StringBuilder();
+
+            /*vBody.append("Mediante la Presente se informa de una solicitud de seguro <br>");
+            vBody.append("con el siguiente detalle: <br><br>");
+            vBody.append("Nombre : "+objRequest.get("nombreCompleto").toString()+" <br>");
+            vBody.append("Correo :"+objRequest.get("correoElectronico").toString()+" <br />");
+            vBody.append("Ciudad: "+ objRequest.get("ciudad").toString()+" <br />");
+            vBody.append("CI: "+objRequest.get("ci").toString()+" <br />" );
+            vBody.append("Celular: "+objRequest.get("celular").toString()+" <br />");
+            vBody.append("Tipo de seguro: "+objRequest.get("tipoSeguro").toString()+" <br />");
+            vBody.append("Mensaje: "+objRequest.get("mensaje").toString()+" <br />");
+            vBody.append("<br />");
+            vBody.append("GANASEGUROS <br>");
+            vBody.append("Correo generado desde la Aplicación Móvil. <br>");*/
+
+
+
+
+            vBody.append("<div style='background-color: #6fbf31; color: #fff; width: 100%; height: 50px; font-size: 40px; text-align: center;'>SOLICITUD DE SEGURO</div>");
+            vBody.append("<p>Mediante la presente se informa de una solicitud de Seguro desde la Aplicaci&oacute;n M&oacute;vil con el siguiente detalle:</p>");
+            vBody.append("<table style='border-collapse: collapse; width: 100%; height: 126px;' border='1'>");
+            vBody.append("<tbody>");
+            vBody.append("<tr style='height: 18px;'>");
+            vBody.append("<td style='width: 50%; height: 18px; '><strong>Nombre(s)</strong></td>");
+            vBody.append("<td style='width: 50%; height: 18px;'>"+pSolicitudPolizaDto.getNombres()!=null?pSolicitudPolizaDto.getNombres():" - "+"</td>");
+            vBody.append("</tr>");
+            vBody.append("<tr style='height: 18px;'>");
+            vBody.append("<td style='width: 50%; height: 18px; '><strong>Apellido(s)</strong></td>");
+            vBody.append("<td style='width: 50%; height: 18px;'>"+pSolicitudPolizaDto.getApellidos()!=null?pSolicitudPolizaDto.getApellidos():" - "+"</td>");
+            vBody.append("</tr>");
+            vBody.append("<tr style='height: 18px;'>");
+            vBody.append("<td style='width: 50%; height: 18px; '><strong>Teléfono o Celular</strong></td>");
+            vBody.append("<td style='width: 50%; height: 18px;'>"+pSolicitudPolizaDto.getTelefonoCelular()!=null?pSolicitudPolizaDto.getTelefonoCelular():""+"</td>");
+            vBody.append("</tr>");
+            vBody.append("<tr style='height: 18px;'>");
+            vBody.append("<td style='width: 50%; height: 18px; '><strong>Correo</strong></td>");
+            vBody.append("<td style='width: 50%; height: 18px;'>"+pSolicitudPolizaDto.getCorreo()!=null?pSolicitudPolizaDto.getCorreo():""+"</td>");
+            vBody.append("</tr>");
+            vBody.append("<tr style='height: 18px;'>");
+            vBody.append("<td style='width: 50%; height: 18px; '><strong>Ciudad</strong></td>");
+            vBody.append("<td style='width: 50%; height: 18px;'>"+pSolicitudPolizaDto.getCiudad()!=null?pSolicitudPolizaDto.getCiudad():""+"</td>");
+            vBody.append("</tr>");
+            vBody.append("<tr style='height: 18px;'>");
+            vBody.append("<td style='width: 50%; height: 18px; '><strong>Tiene algun seguro contratado con nosotros?</strong></td>");
+            if(pSolicitudPolizaDto.getTieneSeguroConNosotros()){
+                vBody.append("<td style='width: 50%; height: 18px;'>SI</td>");
+            }else{
+                vBody.append("<td style='width: 50%; height: 18px;'>NO</td>");
+            }
+            vBody.append("</tr>");
+            vBody.append("<tr style='height: 18px;'>");
+            vBody.append("<td style='width: 50%; height: 18px; '><strong>Tiene algun seguro contratado con otra compañia?</strong></td>");
+            if(pSolicitudPolizaDto.getTieneSeguroConOtros()){
+                vBody.append("<td style='width: 50%; height: 18px;'>SI</td>");
+            }else{
+                vBody.append("<td style='width: 50%; height: 18px;'>NO</td>");
+            }
+            vBody.append("</tr>");
+
+            vBody.append("<tr style='height: 18px;'>");
+            vBody.append("<td style='width: 50%; height: 18px; '><strong>Tipo de seguro de interés</strong></td>");
+            vBody.append("<td style='width: 50%; height: 18px;'>"+pSolicitudPolizaDto.getTipoSeguroInteresado()!=null?pSolicitudPolizaDto.getTipoSeguroInteresado():""+"</td>");
+            vBody.append("</tr>");
+
+            vBody.append("</tbody>");
+            vBody.append("</table>");
+            vBody.append("<p></p>");
+            vBody.append("<hr />");
+            vBody.append("<p><strong>GANASEGUROS</strong><br />Correo generado desde la Aplicaci&oacute;n M&oacute;vil.</p>");
+            vBody.append(" <img src='https://front-funcionales.azurewebsites.net/img/logo_ganaseguros3.c585e0d6.jpg' > ");
+
+
+            // Determinar el destinatario copia
+            //String vDestino = "azquispe@bg.com.bo";
+            String vDestino = "alvaroquispesegales@gmail.com";
+            //String vDestino = "alvaro20092004@hotmail.com";
+
+
+            emailService.enviarCorreoHtml(vDestino,vAsunto,vBody.toString());
+
+            res.setCodigo("1000");
+            res.setMensaje("Envio de correo exitoso");
+            return res;
+
+
+        }catch (Exception ex){
+            res.setCodigo("1001");
+            res.setMensaje("Error al enviar correo");
+            return res;
+        }
+    }
+
     public ResponseDto descargarPoliza(String pPolicyId){
         ResponseDto res = new ResponseDto();
         Map<String, Object> mapDatosPolizaDetalle = null;

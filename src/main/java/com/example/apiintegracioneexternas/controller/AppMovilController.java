@@ -3,6 +3,7 @@ package com.example.apiintegracioneexternas.controller;
 
 import com.example.apiintegracioneexternas.dto.PolizasDto;
 import com.example.apiintegracioneexternas.dto.ResponseDto;
+import com.example.apiintegracioneexternas.dto.SolicitudPolizaDto;
 import com.example.apiintegracioneexternas.service.AppMovilService;
 import com.example.apiintegracioneexternas.service.GanaTechService;
 import org.apache.catalina.connector.Response;
@@ -46,6 +47,22 @@ public class AppMovilController {
 
         Map<String, Object> response = new HashMap<>();
         ResponseDto result = appMovilService.enviarSolicitudSeguro(objRequest);
+        response.put("result", result.getElementoGenerico());
+        response.put("message",result.getMensaje());
+        if(result.getCodigo().equals("1000")){
+            response.put("status", 200);
+        }else{
+            response.put("status", 404);
+        }
+
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/v2/solicitud-seguro")
+    public ResponseEntity<?> solicitudSegurov2(@RequestBody SolicitudPolizaDto pSolicitudPolizaDto) {
+
+        Map<String, Object> response = new HashMap<>();
+        ResponseDto result = appMovilService.enviarSolicitudSeguroV2(pSolicitudPolizaDto);
         response.put("result", result.getElementoGenerico());
         response.put("message",result.getMensaje());
         if(result.getCodigo().equals("1000")){
