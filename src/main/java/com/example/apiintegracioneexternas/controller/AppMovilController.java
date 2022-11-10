@@ -65,7 +65,7 @@ public class AppMovilController {
         ResponseDto result = appMovilService.enviarSolicitudSeguroV2(pSolicitudPolizaDto);
         response.put("result", result.getElementoGenerico());
         response.put("message",result.getMensaje());
-        if(result.getCodigo().equals("1000")){
+        if(result.getCodigo().equals("COD-SAT-1000")){
             response.put("status", 200);
         }else{
             response.put("status", 404);
@@ -81,7 +81,7 @@ public class AppMovilController {
         ResponseDto result = appMovilService.descargarPoliza(pPolicyId);
         response.put("result", result.getElementoGenerico());
         response.put("message",result.getMensaje());
-        if(result.getCodigo().equals("1000")){
+        if(result.getCodigo().equals("COD-SAT-1000")){
             response.put("status", 200);
         }else{
             response.put("status", 404);
