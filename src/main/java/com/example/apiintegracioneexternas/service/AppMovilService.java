@@ -112,6 +112,7 @@ public class AppMovilService {
                                     List<Map<String, Object>> lstMapPolizas = oMapper.convertValue(objMapProductos.get("objetos"), ArrayList.class);
                                     for (Map<String, Object> objMapPoliza : lstMapPolizas) {
                                         objPoliza = new PolizasDto();
+                                        objPoliza = this.initObjPOliza(objPoliza);
                                         objPoliza.setPolizaId(objMapPoliza.get("PolicyId") != null ? objMapPoliza.get("PolicyId").toString() : "-");
                                         objPoliza.setNombreProducto(objMapPoliza.get("productName") != null ? objMapPoliza.get("productName").toString() : " - ");
                                         objPoliza.setNumeroProducto("no-identificado");
@@ -154,7 +155,7 @@ public class AppMovilService {
                                                     for (Map<String, Object> objMapBeneficiarios : lstMapBeneficiarios) {
                                                         lstBeneficiarios.add(
                                                                 (objMapBeneficiarios.get("Nombre") != null ? objMapBeneficiarios.get("Nombre").toString() : " - ") +
-                                                                        (objMapBeneficiarios.get("Porcentaje") != null ? "(" + objMapBeneficiarios.get("Porcentaje").toString() + "%)" : " - ")
+                                                                        (objMapBeneficiarios.get("Porcentaje") != null ? " (" + objMapBeneficiarios.get("Porcentaje").toString() + "%)" : " - ")
                                                         );
                                                     }
                                                 }
@@ -165,9 +166,9 @@ public class AppMovilService {
 
                                             }
                                         }
-
+                                        lstPolizas.add(objPoliza);
                                     }
-                                    lstPolizas.add(objPoliza);
+
                                 }
 
                             }
@@ -339,10 +340,15 @@ public class AppMovilService {
                 if (mapDatosPolizaDetalle.get("codigoMensaje").equals("CODSF1002")) {
                     List<Map<String, Object>> lstMapPolizaDetalle = oMapper.convertValue(mapDatosPolizaDetalle.get("Poliza"), ArrayList.class);
                     Map<String, Object> objMapPolizaDetalle = oMapper.convertValue(lstMapPolizaDetalle.get(0), Map.class);
+                    if(objMapPolizaDetalle.get("ArchivoBase64")!=null && !objMapPolizaDetalle.get("ArchivoBase64").toString().trim().equals("")){
+                        res.setCodigo("COD-SAT-1000");
+                        res.setMensaje("Poliza Obtenida Exitosamente");
+                        res.setElementoGenerico(objMapPolizaDetalle.get("ArchivoBase64"));
+                    }else{
+                        res.setCodigo("COD-SAT-1001");
+                        res.setMensaje("No existe Poliza PDF");
+                    }
 
-                    res.setCodigo("COD-SAT-1000");
-                    res.setMensaje("Poliza Obtenida Exitosamente");
-                    res.setElementoGenerico(objMapPolizaDetalle.get("ArchivoBase64"));
 
 
                 }}
@@ -351,5 +357,24 @@ public class AppMovilService {
             res.setMensaje("Error :"+ex.toString());
         }
         return res;
+    }
+    private PolizasDto initObjPOliza(PolizasDto  pPolizasDto){
+        pPolizasDto.setPolizaId(" - ");
+        pPolizasDto.setNombreProducto(" - ");
+        pPolizasDto.setNumeroProducto(" - ");
+        pPolizasDto.setNombreAsegurado(" - ");
+        pPolizasDto.setNombreTomador(" - ");
+        pPolizasDto.setLstBeneficiarios(new ArrayList<>());
+        pPolizasDto.setNumeroOperacion(" - ");
+        pPolizasDto.setNombrePoliza(" - ");
+        pPolizasDto.setFechaInicio(" - ");
+        pPolizasDto.setFechaFin(" - ");
+        pPolizasDto.setEstado(" - ");
+        pPolizasDto.setTipoProducto(" - ");
+        pPolizasDto.setFrecuencia(" - ");
+        pPolizasDto.setMontoPrima(" - ");
+        pPolizasDto.setPrecio(" - ");
+        return pPolizasDto;
+
     }
 }
