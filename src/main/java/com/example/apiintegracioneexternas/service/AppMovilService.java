@@ -294,21 +294,6 @@ public class AppMovilService {
             // Crear el cuerpo del correo
             StringBuilder vBody = new StringBuilder();
 
-            /*vBody.append("Mediante la Presente se informa de una solicitud de seguro <br>");
-            vBody.append("con el siguiente detalle: <br><br>");
-            vBody.append("Nombre : "+objRequest.get("nombreCompleto").toString()+" <br>");
-            vBody.append("Correo :"+objRequest.get("correoElectronico").toString()+" <br />");
-            vBody.append("Ciudad: "+ objRequest.get("ciudad").toString()+" <br />");
-            vBody.append("CI: "+objRequest.get("ci").toString()+" <br />" );
-            vBody.append("Celular: "+objRequest.get("celular").toString()+" <br />");
-            vBody.append("Tipo de seguro: "+objRequest.get("tipoSeguro").toString()+" <br />");
-            vBody.append("Mensaje: "+objRequest.get("mensaje").toString()+" <br />");
-            vBody.append("<br />");
-            vBody.append("GANASEGUROS <br>");
-            vBody.append("Correo generado desde la Aplicación Móvil. <br>");*/
-
-
-
 
             vBody.append("<div style='background-color: #6fbf31; color: #fff; width: 100%; height: 50px; font-size: 40px; text-align: center;'>SOLICITUD DE SEGURO</div>");
             vBody.append("<p>Mediante la presente se informa de una solicitud de Seguro desde la Aplicaci&oacute;n M&oacute;vil con el siguiente detalle:</p>");
