@@ -115,7 +115,10 @@ public class AppMovilService {
                                         objPoliza = this.initObjPOliza(objPoliza);
                                         objPoliza.setPolizaId(objMapPoliza.get("PolicyId") != null ? objMapPoliza.get("PolicyId").toString() : "-");
                                         objPoliza.setNombreProducto(objMapPoliza.get("productName") != null ? objMapPoliza.get("productName").toString() : " - ");
-                                        objPoliza.setNumeroProducto("no-identificado");
+
+                                        //objPoliza.setNumeroProducto("no-identificado");
+                                        objPoliza.setNumeroProducto(objMapPoliza.get("PolicyNumber") != null ? objMapPoliza.get("PolicyNumber").toString() : "-");
+
                                         objPoliza.setTipoProducto("no-identificado");
 
                                         //objPoliza.setNombreAsegurado(objMapPoliza.get("NameInsured") != null ? objMapPoliza.get("NameInsured").toString() : " - ");
