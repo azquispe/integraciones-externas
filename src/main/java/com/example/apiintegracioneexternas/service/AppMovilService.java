@@ -4,6 +4,7 @@ import com.example.apiintegracioneexternas.dto.PolizasDto;
 import com.example.apiintegracioneexternas.dto.ResponseDto;
 import com.example.apiintegracioneexternas.dto.SolicitudPolizaDto;
 import com.example.apiintegracioneexternas.utils.constantes.ConstDiccionarioMensaje;
+import com.example.apiintegracioneexternas.utils.constantes.FuncionesFechas;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,8 +127,8 @@ public class AppMovilService {
                                         //objPoliza.setNombreAsegurado(objMapPoliza.get("NameInsured") != null ? objMapPoliza.get("NameInsured").toString() : " - ");
 
                                         objPoliza.setNombrePoliza(objMapPoliza.get("PolicyName") != null ? objMapPoliza.get("PolicyName").toString() : " - ");
-                                        objPoliza.setFechaInicio(objMapPoliza.get("EffectiveDate") != null ? objMapPoliza.get("EffectiveDate").toString() : " - ");
-                                        objPoliza.setFechaFin(objMapPoliza.get("ExpirationDate") != null ? objMapPoliza.get("ExpirationDate").toString() : " - ");
+                                        objPoliza.setFechaInicio(objMapPoliza.get("EffectiveDate") != null ? FuncionesFechas.formatearFecha_ddmmyyyy(objMapPoliza.get("EffectiveDate").toString()) : " - ");
+                                        objPoliza.setFechaFin(objMapPoliza.get("ExpirationDate") != null ? FuncionesFechas.formatearFecha_ddmmyyyy(objMapPoliza.get("ExpirationDate").toString()) : " - ");
 
 
                                         objPoliza.setFrecuencia(objMapPoliza.get("PremiumFrecuency") != null ? objMapPoliza.get("PremiumFrecuency").toString() : " - ");
