@@ -152,7 +152,7 @@ public class AppMovilService {
 
                                                 List<Map<String, Object>> lstMapPolizaDetalle = oMapper.convertValue(mapDatosPolizaDetalle.get("Poliza"), ArrayList.class);
                                                 Map<String, Object> objMapPolizaDetalle = oMapper.convertValue(lstMapPolizaDetalle.get(0), Map.class);
-
+                                                objPoliza.setNombreProducto(objMapPolizaDetalle.get("productName") != null ? objMapPolizaDetalle.get("productName").toString() : " - ");  // temproal ya q en github esta en el servicio anterior
                                                 objPoliza.setNombreTomador(objMapPolizaDetalle.get("NombreTomador") != null ? objMapPolizaDetalle.get("NombreTomador").toString() : "-");
                                                 objPoliza.setNombreAsegurado(objMapPolizaDetalle.get("NombreAsegurado") != null ? objMapPolizaDetalle.get("NombreAsegurado").toString() : "-"  );
                                                 List<String> lstBeneficiarios = new ArrayList();
