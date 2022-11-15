@@ -27,6 +27,7 @@ public class AppMovilController {
     @Autowired
     private AppMovilService appMovilService;
 
+    // CONSULTA DE POLIZAS, ESTE ES NUEVO COENTARIO POR AQUISÉ
     @PostMapping("/v1/consulta-poliza")
     public ResponseEntity<?> consultaSegip(@RequestBody Map objRequest) {
 
